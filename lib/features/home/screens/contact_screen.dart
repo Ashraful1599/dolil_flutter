@@ -45,7 +45,7 @@ class _ContactScreenState extends State<ContactScreen> {
           const SizedBox(height: 24),
 
           // Contact info
-          _infoCard(Icons.email_outlined, 'Email', 'support@dolilbd.com'),
+          _infoCard(Icons.email_outlined, 'Email', 'dolilbd247@gmail.com'),
           _infoCard(Icons.phone_outlined, 'Phone', '+880 1234-567890'),
           _infoCard(Icons.location_on_outlined, 'Address', 'Dhaka, Bangladesh'),
 
