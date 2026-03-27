@@ -70,7 +70,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
       body: _loading
         ? Padding(padding: const EdgeInsets.all(16), child: Column(children: [
-            GridView.count(crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 1.5, children: List.generate(4, (_) => const CardSkeletonWidget())),
+            GridView.count(crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 1.1, children: List.generate(4, (_) => const CardSkeletonWidget())),
           ]))
         : RefreshIndicator(
             onRefresh: _fetch,
@@ -94,7 +94,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    childAspectRatio: 1.5,
+                    childAspectRatio: 1.1,
                     children: _buildStatCards(),
                   ),
                   const SizedBox(height: 24),

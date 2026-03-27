@@ -9,10 +9,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/phone_normalizer.dart';
 import '../repositories/auth_repository.dart';
 import '../../../shared/providers/dio_provider.dart';
-import '../../../shared/models/location_model.dart';
+import '../../../shared/models/bd_address_model.dart';
 import '../../../shared/widgets/otp_input_widget.dart';
-import '../../../shared/widgets/cascading_location_widget.dart';
-import '../../home/repositories/location_repository.dart';
+import '../../../shared/widgets/bd_cascading_address_widget.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -39,7 +38,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _regNoCtrl = TextEditingController();
   final _officeCtrl = TextEditingController();
   final _bioCtrl = TextEditingController();
-  int? _divId, _distId, _upaId;
+  BdAddressSelection _addressSel = const BdAddressSelection();
 
   // Referral
   final _referralCtrl = TextEditingController();
@@ -47,17 +46,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   // Step 2 – OTP
   final _otpKey = GlobalKey<OtpInputWidgetState>();
 
-  // Locations
-  List<DivisionModel> _divisions = [];
-  late LocationRepository _locationRepo;
-
   @override
   void initState() {
     super.initState();
-    _locationRepo = LocationRepository(ref.read(dioProvider));
-    _locationRepo.getDivisions().then((list) {
-      if (mounted) setState(() => _divisions = list);
-    });
   }
 
   @override
@@ -98,9 +89,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           if (_regNoCtrl.text.isNotEmpty) 'registration_number': _regNoCtrl.text.trim(),
           if (_officeCtrl.text.isNotEmpty) 'office_name': _officeCtrl.text.trim(),
           if (_bioCtrl.text.isNotEmpty) 'bio': _bioCtrl.text.trim(),
-          if (_divId != null) 'division_id': _divId,
-          if (_distId != null) 'district_id': _distId,
-          if (_upaId != null) 'upazila_id': _upaId,
+          'address_type': _addressSel.addressType,
+          if (_addressSel.divisionId != null) 'division_id': int.tryParse(_addressSel.divisionId!),
+          if (_addressSel.districtId != null) 'district_id': int.tryParse(_addressSel.districtId!),
+          if (_addressSel.thanaId != null) 'upazila_id': int.tryParse(_addressSel.thanaId!),
+          if (_addressSel.unionId != null) 'bd_union_id': _addressSel.unionId,
+          if (_addressSel.municipalityId != null) 'bd_municipality_id': _addressSel.municipalityId,
+          if (_addressSel.cityCorporationId != null) 'bd_city_corporation_id': _addressSel.cityCorporationId,
+          if (_addressSel.postOfficeId != null) 'bd_post_office_id': _addressSel.postOfficeId,
+          if (_addressSel.ward != null) 'bd_ward': _addressSel.ward,
         },
       };
       await repo.register(data);
@@ -224,11 +221,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         const SizedBox(height: 12),
         TextFormField(controller: _bioCtrl, decoration: const InputDecoration(labelText: 'Bio'), maxLines: 3),
         const SizedBox(height: 16),
-        CascadingLocationWidget(
-          divisions: _divisions,
-          loadDistricts: _locationRepo.getDistricts,
-          loadUpazilas: _locationRepo.getUpazilas,
-          onChanged: (div, dist, upa) { _divId = div; _distId = dist; _upaId = upa; },
+        const Text('ঠিকানা (Address)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.gray700)),
+        const SizedBox(height: 10),
+        BdCascadingAddressWidget(
+          initialSelection: _addressSel,
+          onChanged: (sel) => setState(() => _addressSel = sel),
         ),
       ],
 

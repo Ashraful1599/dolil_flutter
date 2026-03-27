@@ -6,8 +6,10 @@ import 'package:toastification/toastification.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/models/user_model.dart';
+import '../../../shared/models/bd_address_model.dart';
 import '../../../shared/widgets/avatar_widget.dart';
 import '../../../shared/widgets/otp_input_widget.dart';
+import '../../../shared/widgets/bd_cascading_address_widget.dart';
 import '../repository/profile_repository.dart';
 import '../../auth/repositories/auth_repository.dart';
 import '../../../shared/providers/dio_provider.dart';
@@ -36,6 +38,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _saving = false, _uploadingAvatar = false;
   bool _phoneOtpSent = false;
   final _otpKey = GlobalKey<OtpInputWidgetState>();
+  BdAddressSelection _addressSel = const BdAddressSelection();
 
   @override
   void initState() {
@@ -52,6 +55,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _regNoCtrl.text = _user!.registrationNumber ?? '';
     _officeCtrl.text = _user!.officeName ?? '';
     _bioCtrl.text = _user!.bio ?? '';
+    _addressSel = BdAddressSelection(
+      addressType: _user!.addressType ?? 'Union',
+      divisionId: _user!.divisionId?.toString(),
+      districtId: _user!.districtId?.toString(),
+      thanaId: _user!.upazilaId?.toString(),
+      unionId: _user!.bdUnionId,
+      municipalityId: _user!.bdMunicipalityId,
+      cityCorporationId: _user!.bdCityCorporationId,
+      postOfficeId: _user!.bdPostOfficeId,
+      ward: _user!.bdWard,
+    );
   }
 
   @override
@@ -87,6 +101,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         'registration_number': _regNoCtrl.text.trim(),
         'office_name': _officeCtrl.text.trim(),
         'bio': _bioCtrl.text.trim(),
+        'address_type': _addressSel.addressType,
+        if (_addressSel.divisionId != null) 'division_id': int.tryParse(_addressSel.divisionId!),
+        if (_addressSel.districtId != null) 'district_id': int.tryParse(_addressSel.districtId!),
+        if (_addressSel.thanaId != null) 'upazila_id': int.tryParse(_addressSel.thanaId!),
+        if (_addressSel.unionId != null) 'bd_union_id': _addressSel.unionId,
+        if (_addressSel.municipalityId != null) 'bd_municipality_id': _addressSel.municipalityId,
+        if (_addressSel.cityCorporationId != null) 'bd_city_corporation_id': _addressSel.cityCorporationId,
+        if (_addressSel.postOfficeId != null) 'bd_post_office_id': _addressSel.postOfficeId,
+        if (_addressSel.ward != null) 'bd_ward': _addressSel.ward,
       });
       ref.read(currentUserProvider.notifier).state = updated;
       setState(() => _user = updated);
@@ -224,6 +247,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               TextFormField(controller: _officeCtrl, decoration: const InputDecoration(labelText: 'Office Name')),
               const SizedBox(height: 12),
               TextFormField(controller: _bioCtrl, decoration: const InputDecoration(labelText: 'Bio'), maxLines: 4),
+              const SizedBox(height: 16),
+              const Text('ঠিকানা (Address)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.gray700)),
+              const SizedBox(height: 10),
+              BdCascadingAddressWidget(
+                initialSelection: _addressSel,
+                onChanged: (sel) => setState(() => _addressSel = sel),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(onPressed: _saving ? null : _saveWriterInfo, child: const Text('Save Professional Info')),
             ]),

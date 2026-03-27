@@ -21,6 +21,12 @@ class UserModel {
   final double? averageRating;
   final int? totalReviews;
   final String? referralCode;
+  final String? addressType;
+  final String? bdUnionId;
+  final String? bdMunicipalityId;
+  final String? bdCityCorporationId;
+  final String? bdPostOfficeId;
+  final String? bdWard;
 
   const UserModel({
     required this.id,
@@ -44,6 +50,12 @@ class UserModel {
     this.averageRating,
     this.totalReviews,
     this.referralCode,
+    this.addressType,
+    this.bdUnionId,
+    this.bdMunicipalityId,
+    this.bdCityCorporationId,
+    this.bdPostOfficeId,
+    this.bdWard,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -68,6 +80,12 @@ class UserModel {
     averageRating: (json['average_rating'] as num?)?.toDouble(),
     totalReviews: json['total_reviews'],
     referralCode: json['referral_code'],
+    addressType: json['address_type'],
+    bdUnionId: json['bd_union_id'],
+    bdMunicipalityId: json['bd_municipality_id'],
+    bdCityCorporationId: json['bd_city_corporation_id'],
+    bdPostOfficeId: json['bd_post_office_id'],
+    bdWard: json['bd_ward'],
   );
 
   bool get isAdmin => role == 'admin';
